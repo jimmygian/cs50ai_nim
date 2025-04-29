@@ -111,7 +111,7 @@ class NimAI():
             print("No Q-value found, returning 0")
             return 0
 
-    def update_q_value(self, state, action, old_q, reward, future_rewards):
+    def update_q_value(self, state, action, old_q, reward, future_rewards, gamma=1):
         """
         Update the Q-value for the state `state` and the action `action`
         given the previous Q-value `old_q`, a current reward `reward`,
@@ -125,8 +125,8 @@ class NimAI():
         where `old value estimate` is the previous Q-value,
         `alpha` is the learning rate, and `new value estimate`
         is the sum of the current reward and estimated future rewards.
-        """
-        raise NotImplementedError
+        """        
+        self.q[tuple(state), action] = old_q + self.alpha * (gamma*(reward + future_rewards) - old_q)
 
     def best_future_reward(self, state):
         """
@@ -289,7 +289,22 @@ def play(ai, human_player=None):
 
 
 if __name__ == "__main__":
-    ai = NimAI()
-    ai.q[(1, 3, 5, 7), (0, 1)] = 0.5
-    ai.get_q_value([1, 3, 5, 7], (0, 1))
-    # ai.get_q_value([1, 3, 5, 7], (0, 2))
+    # Step 1: Create the AI agent
+    ai = NimAI(alpha=0.5)
+
+    # Step 2: Define a test state and action
+    state = [1, 3, 5, 7]            # the current game state
+    action = (2, 3)                 # remove 3 items from pile 2
+
+    # Step 3: Manually define old_q, reward, and future_rewards
+    old_q = 0.5                     # existing Q-value (pre-learned)
+    reward = 1                      # suppose this move led to a win
+    future_rewards = 0             # terminal state, so no future reward
+    
+    # Step 4: Manually call update_q_value with all values
+    ai.update_q_value(state, action, old_q, reward, future_rewards)
+
+    # # Step 5: Check result (not calling any other function)
+    # print("Updated Q-table:")
+    # for key, value in ai.q.items():
+    #     print(f"{key}: {value}")
