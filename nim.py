@@ -102,13 +102,10 @@ class NimAI():
         If no Q-value exists yet in `self.q`, return 0.
         """
         state_tuple = tuple(state)
-        print(f"State: {state_tuple}")
-        print(f"Action: {action}")
+
         if (state_tuple, action) in self.q:
-            print(f"Q-value: {self.q[(state_tuple, action)]}")
             return self.q[(state_tuple, action)]
         else:
-            print("No Q-value found, returning 0")
             return 0
 
     def update_q_value(self, state, action, old_q, reward, future_rewards, gamma=1):
@@ -126,7 +123,8 @@ class NimAI():
         `alpha` is the learning rate, and `new value estimate`
         is the sum of the current reward and estimated future rewards.
         """        
-        self.q[tuple(state), action] = old_q + self.alpha * (gamma*(reward + future_rewards) - old_q)
+        self.q[tuple(state), action] = old_q + self.alpha * \
+            (gamma*(reward + future_rewards) - old_q)
 
     def best_future_reward(self, state):
         """
@@ -147,8 +145,6 @@ class NimAI():
 
         return best_reward
 
-
-
     def choose_action(self, state, epsilon=True):
         """
         Given a state `state`, return an action `(i, j)` to take.
@@ -165,21 +161,19 @@ class NimAI():
         options is an acceptable return value.
         """
 
-        # print(f"State: {state}")
-        # j = Nim.available_actions(state)
-        # print(f"Available actions: {j}")
+        available_actions = Nim.available_actions(state)
 
-        # if epsilon and random.random() < self.epsilon:
-        #     random_action = random.choice(list(j))
-        #     print(f"Choosing random action: {random_action}")
-        #     return random.choice(list(j))
-        # else:
-        #     best_action = random.choice(list(j))
-        #     print(f"Choosing best action: {best_action}")
-        #     return best_action # Placeholder for the action to take
-
-        raise NotImplementedError
-
+        if epsilon and random.random() < self.epsilon:
+            random_action = random.choice(list(available_actions))
+            return random_action
+        else:
+            best_future_reward = self.best_future_reward(state)
+            for action in available_actions:
+                if (tuple(state), action) in self.q:
+                    if best_future_reward == self.q[(tuple(state), action)]:
+                        return action
+                    
+        return random.choice(list(available_actions))
 
 
 def train(n):
@@ -295,16 +289,3 @@ def play(ai, human_player=None):
             winner = "Human" if game.winner == human_player else "AI"
             print(f"Winner is {winner}")
             return
-
-
-if __name__ == "__main__":
-    # Step 1: Create the AI agent
-    ai = NimAI(alpha=0.5)
-
-    # # Step 2: Define a test state and action
-    state = [1, 3, 5, 7]            # the current game state
-    # action = (2, 3)                 # remove 3 items from pile 2
-
-
-    bestt = ai.best_future_reward(state)
-    print(bestt)
