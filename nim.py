@@ -138,7 +138,16 @@ class NimAI():
         Q-value in `self.q`. If there are no available actions in
         `state`, return 0.
         """
-        raise NotImplementedError
+        available_actions = Nim.available_actions(state)
+        best_reward = 0
+        for action in available_actions:
+            if (tuple(state), action) in self.q:
+                q_value = self.q[(tuple(state), action)]
+                best_reward = q_value if q_value > best_reward else best_reward
+
+        return best_reward
+
+
 
     def choose_action(self, state, epsilon=True):
         """
@@ -292,19 +301,10 @@ if __name__ == "__main__":
     # Step 1: Create the AI agent
     ai = NimAI(alpha=0.5)
 
-    # Step 2: Define a test state and action
+    # # Step 2: Define a test state and action
     state = [1, 3, 5, 7]            # the current game state
-    action = (2, 3)                 # remove 3 items from pile 2
+    # action = (2, 3)                 # remove 3 items from pile 2
 
-    # Step 3: Manually define old_q, reward, and future_rewards
-    old_q = 0.5                     # existing Q-value (pre-learned)
-    reward = 1                      # suppose this move led to a win
-    future_rewards = 0             # terminal state, so no future reward
-    
-    # Step 4: Manually call update_q_value with all values
-    ai.update_q_value(state, action, old_q, reward, future_rewards)
 
-    # # Step 5: Check result (not calling any other function)
-    # print("Updated Q-table:")
-    # for key, value in ai.q.items():
-    #     print(f"{key}: {value}")
+    bestt = ai.best_future_reward(state)
+    print(bestt)
