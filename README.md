@@ -10,7 +10,7 @@ To run the project locally, follow these steps:
 
 1. **Clone the Repository**  
    ```bash
-   git clone https://github.com/your-username/nim-ai.git
+   git clone https://github.com/jimmygian/cs50ai_nim.git
    cd nim-ai
    ```
 
